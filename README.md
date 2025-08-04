@@ -1,32 +1,54 @@
-# 📖 Quiz da Fé – Gamificado
+# 🎯 Quiz da Fé — Gamificação Bíblica
 
-Um quiz interativo sobre a Bíblia com gamificação para estimular a atenção e a dopamina de quem joga.  
-O objetivo é responder perguntas simples relacionadas à fé e à Bíblia, acumulando moedas para liberar bônus exclusivos.
+Um quiz interativo sobre a Bíblia, com sistema de moedas, som de recompensa, confetes e bônus no final.  
+Baseado em estratégias de gamificação para aumentar o engajamento e estimular o aprendizado com diversão.
 
-## ✨ Funcionalidades
-- **3 etapas** com perguntas bíblicas fáceis e diretas.  
-- **Sistema de moedas**: cada acerto gera moedas e animações com som.  
-- **Gamificação**: confetes, efeitos sonoros e estímulo de conquista.  
-- **Bônus exclusivo**: apenas quem acerta perguntas suficientes libera cupons.  
-- **Design temático** com cores e elementos inspirados na fé.  
+---
 
-## 🚀 Como usar
-1. Abra o arquivo `quiz_da_fe_enhanced.html` no seu navegador (Firefox ou Chrome).
-2. Responda as perguntas.
-3. Ganhe moedas com acertos e troque por bônus no final.
-4. Clique no botão final para resgatar seu prêmio.
+## 🚀 Funcionalidades
+- **3 Etapas** com perguntas bíblicas de dificuldade fácil.  
+- **Sistema de moedas**: ganhe moedas a cada resposta correta.  
+- **Efeitos visuais**: confetes e animações de ganho.  
+- **Efeitos sonoros**: som de acerto e erro para estimular o usuário.  
+- **Sistema de bônus**: apenas quem acerta libera cupons de desempenho, mínimo de 3 se acertar algo.  
+- **Oferta limitada**: mensagem persuasiva para acessar o produto.
 
-## 🌐 Como colocar online
-Você pode hospedar o arquivo em qualquer serviço de site estático:
-- **GitHub Pages** (grátis)
-- **Netlify** (grátis e mais fácil)
-- **Vercel** (grátis)
+---
 
-### Exemplo de publicação no GitHub Pages:
-1. Crie um repositório público no GitHub.
-2. Faça upload do arquivo `.html`.
-3. Vá em *Settings > Pages* e ative.
-4. Use a URL gerada para compartilhar.
+## 🖥 Visual
+- Tema inspirado em **fé e Bíblia** (tons dourado e azul profundo).  
+- Interface responsiva para celulares e desktops.  
+- Design focado em estimular **dopamina** e manter o usuário engajado.
+
+---
+
+## 📂 Estrutura do Projeto
+```
+index.html   # Arquivo principal do quiz
+README.md    # Este arquivo de descrição
+```
+
+---
+
+## 🌍 Acesse Online
+Depois de subir no GitHub Pages, acesse:
+```
+https://SEU-USUARIO.github.io/quiz-da-fe/
+```
+
+---
+
+## 📦 Como Executar Localmente
+1. Baixe (ou coloque) o arquivo `index.html` em uma pasta.  
+2. Abra no navegador:  
+   - **Firefox:** clique duas vezes no arquivo.  
+   - **Google Chrome (Linux):**  
+     ```bash
+     google-chrome --allow-file-access-from-files index.html
+     ```
+
+---
 
 ## 📜 Licença
-Uso livre para fins pessoais ou evangelísticos.
+Este projeto é de uso livre para fins educacionais e religiosos.  
+Desenvolvido para inspirar fé através da tecnologia.
