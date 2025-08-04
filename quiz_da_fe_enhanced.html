@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<title>Quiz da Fé - Ganhe Bônus</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+  :root {
+    --bg:#0f111a;
+    --card:#1f233d;
+    --accent:#ffcd00;
+    --text:#f0f5ff;
+    --radius:14px;
+    --transition:.25s;
+    font-family: system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;
+  }
+  *{box-sizing:border-box;}
+  body {
+    margin:0;
+    background: linear-gradient(135deg,#0f111a,#1f233d);
+    color: var(--text);
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:1rem;
+  }
+  .app {
+    max-width:560px;
+    width:100%;
+    background: var(--card);
+    border-radius: var(--radius);
+    padding:1.75rem 2rem;
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 25px 80px -10px rgba(0,0,0,.65);
+  }
+  h1 { margin-top:0; font-size:1.6rem; letter-spacing:0.5px; }
+  .stage-label {
+    display:inline-block;
+    background: rgba(255,205,0,0.1);
+    padding:4px 10px;
+    border-radius:8px;
+    margin-bottom:6px;
+    font-size:.75rem;
+    text-transform:uppercase;
+    letter-spacing:1px;
+  }
+  .scoreboard {
+    display:flex;
+    justify-content: space-between;
+    margin-bottom:1rem;
+    gap:1rem;
+    flex-wrap:wrap;
+  }
+  .badge {
+    background:#1b1f35;
+    padding:.65rem 1rem;
+    border-radius:8px;
+    font-size:.85rem;
+    display:flex;
+    align-items:center;
+    gap:.4rem;
+    position:relative;
+  }
+  .question-box {
+    margin-top: .5rem;
+    margin-bottom:1rem;
+  }
+  .question {
+    font-size:1.2rem;
+    margin:0 0 .75rem 0;
+  }
+  .options {
+    display:grid;
+    gap:.75rem;
+  }
+  .option-btn {
+    background: #272d54;
+    border:2px solid transparent;
+    padding:.95rem 1rem;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:1rem;
+    position: relative;
+    transition: var(--transition);
+    width:100%;
+    text-align:left;
+  }
+  .option-btn:hover { transform:scale(1.02); }
+  .option-btn.correct { border-color:#2ecc71; background: rgba(46,204,113,0.1); }
+  .option-btn.wrong { border-color:#e74c3c; background: rgba(231,76,60,0.1); }
+  .feedback {
+    margin-top:.75rem;
+    min-height:26px;
+    font-weight:600;
+  }
+  .next-btn, .reset-btn {
+    margin-top:1rem;
+    padding:.85rem 1.2rem;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    background: var(--accent);
+    color:#1a1a1a;
+    transition: var(--transition);
+  }
+  .next-btn:disabled {
+    opacity:.5;
+    cursor:not-allowed;
+  }
+  .final {
+    text-align:center;
+  }
+  .bonus {
+    background:#22294f;
+    padding:1rem;
+    border-radius:10px;
+    margin-top:1rem;
+    text-align:left;
+  }
+  .small { font-size:.75rem; color:#aaa; }
+  .coin-display {
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+  }
+  .coin-icon {
+    display:inline-block;
+    width:18px;
+    height:18px;
+    background: radial-gradient(circle at 30% 30%, #ffe066,#f5b700);
+    border-radius:50%;
+    position: relative;
+  }
+  .coin-icon::after {
+    content:'🪙';
+    position:absolute;
+    top:0; left:0;
+    width:100%; height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:14px;
+  }
+  .link-btn {
+    display:inline-block;
+    margin-top:10px;
+    padding:14px 20px;
+    background:#1aa260;
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    text-decoration:none;
+    font-size:1rem;
+  }
+  .bonus-highlight {
+    margin-top:10px;
+    background: rgba(46,204,113,0.1);
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #2ecc71;
+  }
+  .persuasion {
+    margin-top:1rem;
+    background: linear-gradient(135deg,#ffcd00,#f9f1c7);
+    padding:14px;
+    border-radius:10px;
+    color:#1a1a1a;
+    font-weight:600;
+  }
+  .availability {
+    display:inline-block;
+    background:#e67e22;
+    padding:6px 12px;
+    border-radius:6px;
+    margin-left:6px;
+    font-size:.8rem;
+    color:#fff;
+  }
+  .confetti {
+    pointer-events:none;
+    position:fixed;
+    inset:0;
+    z-index:999;
+    overflow:hidden;
+  }
+  .confetto {
+    position:absolute;
+    width:8px;
+    height:8px;
+    background: #ffcd00;
+    opacity:0.9;
+    border-radius:2px;
+    will-change:transform,opacity;
+    mix-blend-mode:screen;
+  }
+</style>
+</head>
+<body>
+
+<div class="app" aria-label="Quiz da Fé gamificado">
+  <div class="stage-label" id="stage-label">Etapa 1 de 3</div>
+  <h1>Quiz da Fé</h1>
+  <div class="scoreboard">
+    <div class="badge">
+      <div class="coin-display">
+        <div class="coin-icon" aria-hidden="true"></div>
+        <div id="coin-count">0</div>
+      </div>
+      <div style="margin-left:4px;">Moedas</div>
+    </div>
+    <div class="badge">
+      <div id="question-progress">Pergunta 1 / 9</div>
+    </div>
+  </div>
+
+  <div id="content"></div>
+
+  <div class="final" id="final-screen" style="display:none;">
+    <h2>Você completou o Quiz!</h2>
+    <p class="bonus-highlight">Mesmo que não tenha acertado tudo, <strong>você ganhou 3 bônus garantidos</strong>!</p>
+    <p>Acumulou <strong><span id="final-coins">0</span> moedas</strong> nas três etapas.</p>
+    <div class="bonus">
+      <p><strong>Conversão de moedas em bônus:</strong></p>
+      <p id="bonus-detail"></p>
+      <p>Esse bônus dá acesso ao <strong>livro especial sobre a Bíblia</strong> e técnicas para fortalecer sua fé.</p>
+      <div class="persuasion">
+        <p>🔔 <strong>Oferta limitada:</strong> Apenas <span class="availability">3 unidades disponíveis</span> com esse bônus exclusivo. Quem age primeiro leva mais — o tempo para resgatar está passando. Clique agora e garanta o seu livro com desconto e os 3 bônus que já são seus.</p>
+      </div>
+      <a class="link-btn" id="product-link" href="https://www.facebook.com/" target="_blank" aria-label="Acessar produto e resgatar bônus">👉 Acessar e Resgatar (3 bônus)</a>
+    </div>
+    <button class="reset-btn" id="restart">Refazer Quiz</button>
+    <div class="footer" style="margin-top:12px;font-size:.75rem;color:#bbb;text-align:center;">
+      <p>Baseado em consciência e crescimento espiritual. Este quiz usa gamificação inspirada em casas de aposta para criar momentos de vitória que reforçam sua fé.</p>
+    </div>
+  </div>
+</div>
+
+<!-- container para animações -->
+<div id="floating-container"></div>
+<div class="confetti" id="confetti-container"></div>
+
+<script>
+/* === CONFIGURAÇÃO === */
+const stages = [
+  {
+    name: "Etapa 1",
+    questions: [
+      {
+        q: "Quantos discípulos Jesus escolheu originalmente?",
+        options: ["10", "12", "14", "16"],
+        correct: 1,
+        reward: 5
+      },
+      {
+        q: "Qual é o primeiro livro da Bíblia?",
+        options: ["Êxodo", "Gênesis", "Salmos", "Isaías"],
+        correct: 1,
+        reward: 5
+      },
+      {
+        q: "Quem construiu a arca para sobreviver ao dilúvio?",
+        options: ["Moisés", "Abraão", "Noé", "Davi"],
+        correct: 2,
+        reward: 5
+      }
+    ]
+  },
+  {
+    name: "Etapa 2",
+    questions: [
+      {
+        q: "Qual é o fruto do Espírito mencionado em Gálatas?",
+        options: ["Riqueza", "Amor", "Fama", "Poder"],
+        correct: 1,
+        reward: 10
+      },
+      {
+        q: "Quem foi jogado na cova dos leões e sobreviveu?",
+        options: ["Daniel", "Elias", "Samuel", "Jonas"],
+        correct: 0,
+        reward: 10
+      },
+      {
+        q: "Qual o nome do rei famoso por sua sabedoria?",
+        options: ["Saul", "Salomão", "Josias", "Rebeca"],
+        correct: 1,
+        reward: 10
+      }
+    ]
+  },
+  {
+    name: "Etapa 3",
+    questions: [
+      {
+        q: "Jesus multiplicou quantos pães para alimentar a multidão (no primeiro milagre assim descrito)?",
+        options: ["2", "5", "7", "10"],
+        correct: 1,
+        reward: 15
+      },
+      {
+        q: "Qual é o mandamento principal segundo Jesus?",
+        options: ["Amar a Deus e ao próximo", "Guardar sábado", "Dar dízimos", "Jejuar sempre"],
+        correct: 0,
+        reward: 15
+      },
+      {
+        q: "Quem negou Jesus três vezes antes do galo cantar?",
+        options: ["Pedro", "Tomé", "João", "Judas"],
+        correct: 0,
+        reward: 15
+      }
+    ]
+  }
+];
+
+// conversão de bônus: garante ao menos 3 cupons mesmo com poucas moedas
+function converterBonus(moedas) {
+  const base = Math.floor(moedas / 30);
+  const cupons = Math.max(base, 3);
+  const resto = moedas % 30;
+  return {
+    descricao: `Você conquistou ${cupons} cupom${cupons === 1 ? '' : 's'} de 10% no livro sobre a Bíblia e técnicas de fé. Sobra ${resto} moeda${resto===1?'':'s'}.`,
+    cupons,
+    sobra: resto
+  };
+}
+
+/* === ESTADO === */
+let stageIndex = 0;
+let questionIndex = 0;
+let coins = 0;
+let answered = false;
+
+/* === ELEMENTOS === */
+const coinEl = () => document.getElementById('coin-count');
+const contentEl = () => document.getElementById('content');
+
+/* === SOM E ANIMAÇÃO === */
+function playGainSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const now = ctx.currentTime;
+    // sequencia rápida: três notas ascendentes
+    [500, 650, 800].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      gain.gain.value = 0.08 * (1 - i * 0.1);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(now + i * 0.05);
+      osc.stop(now + i * 0.05 + 0.2);
+    });
+  } catch (e){}
+}
+
+function playErrorSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.value = 180;
+    gain.gain.value = 0.1;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    setTimeout(() => { osc.stop(); }, 250);
+  } catch (e){}
+}
+
+function floatCoinGain(amount, targetBadge) {
+  const container = document.getElementById('floating-container');
+  const el = document.createElement('div');
+  el.textContent = `+${amount} 🪙`;
+  el.style.position = 'absolute';
+  el.style.left = '50%';
+  el.style.top = '40%';
+  el.style.transform = 'translate(-50%, -50%) scale(1)';
+  el.style.padding = '10px 16px';
+  el.style.background = 'rgba(255, 205, 0, 0.95)';
+  el.style.color = '#1a1a1a';
+  el.style.fontWeight = '700';
+  el.style.borderRadius = '999px';
+  el.style.fontSize = '1.2rem';
+  el.style.zIndex = 1000;
+  el.style.transition = 'transform .6s ease-out, opacity .6s ease-out';
+  container.appendChild(el);
+  requestAnimationFrame(() => {
+    el.style.transform = 'translate(-50%, -180px) scale(1.3)';
+    el.style.opacity = '0';
+  });
+  setTimeout(() => { container.removeChild(el); }, 700);
+  triggerConfetti();
+}
+
+function triggerConfetti() {
+  const confettiContainer = document.getElementById('confetti-container');
+  for (let i = 0; i < 25; i++) {
+    const c = document.createElement('div');
+    c.className = 'confetto';
+    c.style.left = Math.random() * 100 + '%';
+    c.style.top = '-10px';
+    c.style.background = ['#ffcd00','#ffffff','#2ecc71','#ff6b6b'][Math.floor(Math.random()*4)];
+    const size = 6 + Math.random()*6;
+    c.style.width = size + 'px';
+    c.style.height = size + 'px';
+    confettiContainer.appendChild(c);
+    const duration = 1200 + Math.random()*600;
+    const endX = (Math.random()-0.5)*200;
+    const endY = 120 + Math.random()*60;
+    c.animate([
+      { transform: `translate(0,0) rotate(0deg)`, opacity:1 },
+      { transform: `translate(${endX}px, ${endY}px) rotate(${Math.random()*360}deg)`, opacity:0 }
+    ], {
+      duration,
+      easing: 'cubic-bezier(.25,.8,.5,1)',
+    });
+    setTimeout(()=>{ confettiContainer.removeChild(c); }, duration+100);
+  }
+}
+
+/* === UI === */
+function updateScoreboard() {
+  coinEl().textContent = coins;
+  const totalQuestions = stages.reduce((sum, s) => sum + s.questions.length, 0);
+  const globalIndex = stages.slice(0, stageIndex).reduce((sum, s) => sum + s.questions.length, 0) + questionIndex;
+  document.getElementById('question-progress').textContent = `Pergunta ${globalIndex+1} / ${totalQuestions}`;
+  document.getElementById('stage-label').textContent = `${stages[stageIndex].name} (${stageIndex+1} de ${stages.length})`;
+}
+
+function showCurrentQuestion() {
+  answered = false;
+  contentEl().innerHTML = '';
+  if (stageIndex >= stages.length) return showFinal();
+  const stage = stages[stageIndex];
+  if (questionIndex >= stage.questions.length) {
+    stageIndex++;
+    questionIndex = 0;
+    if (stageIndex >= stages.length) return showFinal();
+  }
+  if (stageIndex >= stages.length) return showFinal();
+  const qobj = stages[stageIndex].questions[questionIndex];
+
+  const box = document.createElement('div');
+  box.className = 'question-box';
+
+  const label = document.createElement('div');
+  label.className = 'small';
+  label.textContent = stage.name;
+  box.appendChild(label);
+
+  const h1 = document.createElement('div');
+  h1.className = 'question';
+  h1.textContent = qobj.q;
+  box.appendChild(h1);
+
+  const optionsDiv = document.createElement('div');
+  optionsDiv.className = 'options';
+
+  qobj.options.forEach((opt, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.setAttribute('aria-label', `Opção ${opt}`);
+    btn.disabled = false;
+    btn.addEventListener('click', () => selectOption(idx, btn));
+    optionsDiv.appendChild(btn);
+  });
+
+  box.appendChild(optionsDiv);
+
+  const feedback = document.createElement('div');
+  feedback.className = 'feedback';
+  feedback.id = 'feedback';
+  box.appendChild(feedback);
+
+  const next = document.createElement('button');
+  next.textContent = 'Próxima';
+  next.className = 'next-btn';
+  next.id = 'next';
+  next.disabled = true;
+  next.addEventListener('click', () => {
+    questionIndex++;
+    saveState();
+    showCurrentQuestion();
+  });
+  box.appendChild(next);
+
+  contentEl().appendChild(box);
+  updateScoreboard();
+}
+
+function selectOption(idx, btn) {
+  if (answered) return;
+  answered = true;
+  const stage = stages[stageIndex];
+  const qobj = stage.questions[questionIndex];
+  const feedback = document.getElementById('feedback');
+  const nextBtn = document.getElementById('next');
+  document.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+
+  if (idx === qobj.correct) {
+    btn.classList.add('correct');
+    coins += qobj.reward;
+    feedback.textContent = `Correto! +${qobj.reward} moedas.`; 
+    playGainSound();
+    floatCoinGain(qobj.reward);
+  } else {
+    btn.classList.add('wrong');
+    const correctBtn = document.querySelectorAll('.option-btn')[qobj.correct];
+    correctBtn.classList.add('correct');
+    feedback.textContent = `Errado. A resposta certa era "${qobj.options[qobj.correct]}".`; 
+    playErrorSound();
+  }
+  nextBtn.disabled = false;
+  updateScoreboard();
+  saveState();
+}
+
+function showFinal() {
+  document.getElementById('content').style.display = 'none';
+  const final = document.getElementById('final-screen');
+  final.style.display = 'block';
+  document.getElementById('final-coins').textContent = coins;
+  coinEl().textContent = coins;
+  const bonus = converterBonus(coins);
+  document.getElementById('bonus-detail').textContent = bonus.descricao;
+  // código de cupom e link
+  const link = document.getElementById('product-link');
+  let code = "FE"+(bonus.cupons*10)+"OFF";
+  if (bonus.cupons === 0) code = "FÉSTART";
+  link.textContent = `👉 Acessar e resgatar (${code})`;
+  link.setAttribute('data-cupom', code);
+  // link já está definido para facebook
+  clearState();
+}
+
+/* === persistência === */
+function saveState() {
+  const state = { stageIndex, questionIndex, coins };
+  try { localStorage.setItem('quiz_faith_state', JSON.stringify(state)); } catch(e){}
+}
+function loadState() {
+  try {
+    const raw = localStorage.getItem('quiz_faith_state');
+    if (!raw) return;
+    const obj = JSON.parse(raw);
+    if (typeof obj.stageIndex === 'number') stageIndex = obj.stageIndex;
+    if (typeof obj.questionIndex === 'number') questionIndex = obj.questionIndex;
+    if (typeof obj.coins === 'number') coins = obj.coins;
+  } catch(e){}
+}
+function clearState() { try { localStorage.removeItem('quiz_faith_state'); } catch(e){} }
+
+/* === init === */
+document.addEventListener('DOMContentLoaded', () => {
+  loadState();
+  showCurrentQuestion();
+  document.getElementById('restart').addEventListener('click', () => {
+    stageIndex=0; questionIndex=0; coins=0;
+    document.getElementById('content').style.display='';
+    document.getElementById('final-screen').style.display='none';
+    updateScoreboard();
+    showCurrentQuestion();
+    clearState();
+  });
+});
+</script>
+</body>
+</html>
